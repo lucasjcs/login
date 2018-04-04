@@ -24,6 +24,13 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>br.edu.utfpr.cp.tdd</groupId>
+            <artifactId>TDD-login</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

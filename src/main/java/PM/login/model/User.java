@@ -7,13 +7,23 @@ package PM.login.model;
 public class User {
     private String username, password;
     private UserType type;
+    private boolean bloqueado;
     
-    public User(String username, String password, UserType type) {
+    public User(String username, String password, UserType type, boolean bloqueado) {
         this.username = username;
         this.password = password;
         this.type = type;
+        this.bloqueado = bloqueado;
     }
 
+    public boolean isBloqueado() {
+        return bloqueado;
+    }
+
+    public void setBloqueado(boolean bloqueado) {
+        this.bloqueado = bloqueado;
+    }
+    
     public void setPassword(String password) {
         this.password = password;
     }

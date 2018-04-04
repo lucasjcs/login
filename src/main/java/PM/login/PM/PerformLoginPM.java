@@ -12,12 +12,32 @@ public class PerformLoginPM {
     String login;
     String password;
     UserDAO userDao;
-
+    int senhaErrada;
+    boolean bloqueado;
+    
     public PerformLoginPM() {
         login = "";
         password = "";
+        senhaErrada = 0;
+        bloqueado = false;
     }
 
+    public int getSenhaErrada() {
+        return senhaErrada;
+    }
+
+    public void setSenhaErrada(int senhaErrada) {
+        this.senhaErrada = senhaErrada;
+    }
+
+    public boolean isBloqueado() {
+        return bloqueado;
+    }
+
+    public void setBloqueado(boolean bloqueado) {
+        this.bloqueado = bloqueado;
+    }
+    
     public void setLogin(String login) {
         this.login = login;
     }
@@ -50,9 +70,14 @@ public class PerformLoginPM {
         if(user == null)
             throw new Exception("Inexistent username");
         
-        if(! user.getPassword().equals(password))
-            throw new Exception("Wrong password");
-        
+        if(! user.getPassword().equals(password)) {
+            senhaErrada++;
+            return null;
+        }
+        if(senhaErrada >= 3) {
+            bloqueado = true;
+            return null;
+        }
         PagePM pagePM = null;
         if(user.getType() == UserType.ADMIN)
             pagePM = new AdminMainPagePM();
@@ -66,5 +91,11 @@ public class PerformLoginPM {
 
     void setUserDao(UserDAO userDao) {
         this.userDao = userDao;
+    }
+
+    String verificaStatusUsuario(boolean bloqueado) {
+        if(bloqueado == true)
+            return "Usuario bloqueado";
+        return "Usuario Autenticado";
     }
 }
