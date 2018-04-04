@@ -9,13 +9,13 @@ public class User {
     private UserType type;
     private boolean bloqueado;
     
-    public User(String username, String password, UserType type, boolean bloqueado) {
+    public User(String username, String password, UserType type) {
         this.username = username;
         this.password = password;
         this.type = type;
-        this.bloqueado = bloqueado;
+        this.bloqueado = false;
     }
-
+    
     public boolean isBloqueado() {
         return bloqueado;
     }

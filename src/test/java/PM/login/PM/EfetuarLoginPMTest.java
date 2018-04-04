@@ -118,20 +118,46 @@ public class EfetuarLoginPMTest {
     @Test
     public void testUsuarioBloqueado() throws Exception {
         UserDAO userDaoMock = mock(UserDAO.class);
-        
+        User user = new User("user", "normal", UserType.NORMALUSER);
+        user.setBloqueado(true);
         when(userDaoMock.getByName("user"))
-                .thenReturn(new User("user", "normal", UserType.NORMALUSER, status));
+                .thenReturn(user);
 
         PerformLoginPM efetuarLoginPM = new PerformLoginPM();
         efetuarLoginPM.setLogin("user");
         efetuarLoginPM.setPassword("normal");
-        assertEquals("Usuario bloqueado", efetuarLoginPM.verificaStatusUsuario(userDaoMock.getByName("user").getBloqueado()));
-//        boolean status = efetuarLoginPM.verificaStatusUsuario(userDaoMock.getByName("user").getStatus());
-        
+        assertEquals("Usuario bloqueado", efetuarLoginPM.verificaStatusUsuario(userDaoMock.getByName("user").isBloqueado()));
+
         efetuarLoginPM.setUserDao(userDaoMock);
 
         PagePM pagePM = efetuarLoginPM.pressLogin();
         assertTrue(pagePM instanceof NormalUserMainPagePM);
         assertEquals("user", pagePM.getLoggedUser().getUsername());
+    }
+
+    @Test
+    public void testUsuarioBloqueadoDepoisDe3Tentativas() throws Exception {
+        UserDAO userDaoMock = mock(UserDAO.class);
+        when(userDaoMock.getByName("andre"))
+                .thenReturn(new User("andre", "1234", UserType.NORMALUSER));
+
+        PerformLoginPM efetuarLoginPM = new PerformLoginPM();
+        efetuarLoginPM.setLogin("andre");
+        efetuarLoginPM.setPassword("123");
+
+        efetuarLoginPM.setUserDao(userDaoMock);
+
+        for (int i = 1; i <= 4; i++) {
+            try {
+                efetuarLoginPM.pressLogin();
+                fail();
+            } catch (Exception e) {
+               if(i == 4){
+                   assertEquals("Usuario bloqueado", efetuarLoginPM.verificaStatusUsuario(userDaoMock.getByName("andre").isBloqueado()));
+               }else{
+                    assertEquals("Wrong password", e.getMessage());
+               }
+            }
+        }
     }
 }
