@@ -69,7 +69,7 @@ public class PerformLoginPM {
         }
 
         pagePM.setLoggedUser(user);
-
+        erros = 0;
         return pagePM;
     }
 

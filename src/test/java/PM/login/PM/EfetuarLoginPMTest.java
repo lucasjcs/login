@@ -136,6 +136,51 @@ public class EfetuarLoginPMTest {
     }
 
     @Test
+    public void testZeraContadorDeErros() throws Exception {
+        UserDAO userDaoMock = mock(UserDAO.class);
+        User usuario = new User("andre", "1234", UserType.NORMALUSER);
+        when(userDaoMock.getByName("andre"))
+                .thenReturn(usuario);
+
+        PerformLoginPM efetuarLoginPM = new PerformLoginPM();
+        efetuarLoginPM.setLogin("andre");
+        efetuarLoginPM.setPassword("123");
+
+        efetuarLoginPM.setUserDao(userDaoMock);
+
+        for (int i = 1; i <= 2; i++) {
+            try {
+                efetuarLoginPM.pressLogin();
+                fail();
+            } catch (Exception e) {
+                assertEquals("Wrong password", e.getMessage());
+
+            }
+        }
+
+        efetuarLoginPM.setPassword("1234");
+
+        try {
+            efetuarLoginPM.pressLogin();
+        } catch (Exception e) {
+            fail();
+        }
+
+        efetuarLoginPM.setPassword("12345");
+
+        try {
+                efetuarLoginPM.pressLogin();
+                fail();
+            } catch (Exception e) {
+                assertEquals("Wrong password", e.getMessage());
+
+            }
+        
+        assertEquals("Usuario Autenticado", efetuarLoginPM.verificaStatusUsuario(userDaoMock.getByName("andre").isBloqueado()));
+
+    }
+
+    @Test
     public void testUsuarioBloqueadoDepoisDe3Tentativas() throws Exception {
         UserDAO userDaoMock = mock(UserDAO.class);
         when(userDaoMock.getByName("andre"))
@@ -152,11 +197,11 @@ public class EfetuarLoginPMTest {
                 efetuarLoginPM.pressLogin();
                 fail();
             } catch (Exception e) {
-               if(i == 4){
-                   assertEquals("Usuario bloqueado", efetuarLoginPM.verificaStatusUsuario(userDaoMock.getByName("andre").isBloqueado()));
-               }else{
+                if (i == 4) {
+                    assertEquals("Usuario bloqueado", efetuarLoginPM.verificaStatusUsuario(userDaoMock.getByName("andre").isBloqueado()));
+                } else {
                     assertEquals("Wrong password", e.getMessage());
-               }
+                }
             }
         }
     }
